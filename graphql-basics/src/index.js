@@ -11,6 +11,11 @@ const typeDefs = `
         age: Int!
         employed: Boolean!
         gpa: Float
+        title: String!
+        price: Float!
+        releaseYear: Int
+        rating: Float
+        inStock: Boolean!
     }
 `;
 
@@ -31,6 +36,21 @@ const resolvers = {
     },
     gpa() {
       return null;
+    },
+    title() {
+      return "raybans";
+    },
+    price() {
+      return 3000.2;
+    },
+    releaseYear() {
+      return 2020;
+    },
+    rating() {
+      return null;
+    },
+    inStock() {
+      return true;
     },
   },
 };
