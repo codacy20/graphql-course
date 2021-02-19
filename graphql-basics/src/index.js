@@ -3,7 +3,10 @@ import { GraphQLServer } from "graphql-yoga";
 // type deffs
 const typeDefs = `
     type Query{
-        hello: String
+        hello: String!
+        name: String!
+        location: String!
+        bio: String!
     }
 `;
 
@@ -12,6 +15,15 @@ const resolvers = {
   Query: {
     hello() {
       return "this is my shit";
+    },
+    name() {
+      return "my name is something";
+    },
+    location() {
+      return "my local is blabla";
+    },
+    bio() {
+      return "my biooooooo";
     },
   },
 };
