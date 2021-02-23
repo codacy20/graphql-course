@@ -3,14 +3,27 @@ import { GraphQLServer } from "graphql-yoga";
 // Scalar types: String, Boolean, Int, Float, ID,
 // non Scalar types: String, Boolean, Int, Float, ID,
 
+// Demo user data
+
+const users = [
+  { id: "1", name: "Andrew", email: "me@me.com", age: 20 },
+  { id: "2", name: "Amir", email: "me@me.com", age: 22 },
+  { id: "3", name: "jeff", email: "me@me.com", age: 23 },
+];
+
+const posts = [
+  { id: "1", title: "title 1", body: "me@me.com", published: true },
+  { id: "2", title: "title 2", body: "me@me.com", published: true },
+  { id: "3", title: "title 3", body: "me@me.com", published: false },
+];
+
 // type deffs
 const typeDefs = `
     type Query{
         me: User!
         post: Post
-        greeting(name: String, position: String): String!
-        add(numbers:[Float!]!):Float!
-        grades:[Int!]!
+        users(query:String): [User!]!
+        posts(query:String): [Post!]!
     }
 
     type User {
@@ -34,22 +47,30 @@ const resolvers = {
     me() {
       return { id: "123", name: "mike", email: "email@me.com" };
     },
-    greeting(parent, args, ctx, info) {
-      console.log(args);
-      if (args.name && args.position)
-        return `Hi! ${args.name}, you are my fave ${args.position}`;
-      else return "Hi!";
-    },
-    grades(parent, args, ctx, info) {
-      return [99, 80, 93];
-    },
-    add(parent, args, ctx, info) {
-      if (args.numbers.length > 0) {
-        return args.numbers.reduce((acc, curr) => {
-          return acc + curr;
-        });
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
       }
-      return 0;
+      return users.filter((user) => {
+        return user.name
+          .toLocaleLowerCase()
+          .includes(args.query.toLocaleLowerCase());
+      });
+    },
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
+      }
+      return posts.filter((post) => {
+        return (
+          post.title
+            .toLocaleLowerCase()
+            .includes(args.query.toLocaleLowerCase()) ||
+          post.body
+            .toLocaleLowerCase()
+            .includes(args.query.toLocaleLowerCase())
+        );
+      });
     },
     post() {
       return {
