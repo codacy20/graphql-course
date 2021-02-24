@@ -11,10 +11,39 @@ const users = [
   { id: "3", name: "jeff", email: "me@me.com", age: 23 },
 ];
 
+const comments = [
+  {
+    id: "1",
+    text: "comment comment comment comment comment comment",
+    author: "1",
+  },
+  { id: "2", text: "comment comment comment comment", author: "2" },
+  { id: "3", text: "comment comment", author: "1" },
+  { id: "4", text: "comment", author: "2" },
+];
+
 const posts = [
-  { id: "1", title: "title 1", body: "me@me.com", published: true },
-  { id: "2", title: "title 2", body: "me@me.com", published: true },
-  { id: "3", title: "title 3", body: "me@me.com", published: false },
+  {
+    id: "1",
+    title: "title 1",
+    body: "me@me.com",
+    published: true,
+    author: "1",
+  },
+  {
+    id: "2",
+    title: "title 2",
+    body: "me@me.com",
+    published: true,
+    author: "1",
+  },
+  {
+    id: "3",
+    title: "title 3",
+    body: "me@me.com",
+    published: false,
+    author: "2",
+  },
 ];
 
 // type deffs
@@ -24,6 +53,7 @@ const typeDefs = `
         post: Post
         users(query:String): [User!]!
         posts(query:String): [Post!]!
+        comments(query:String): [Comment!]!
     }
 
     type User {
@@ -31,6 +61,8 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
+        posts: [Post!]!
+        comments: [Comment!]!
     }
 
     type Post{
@@ -38,7 +70,14 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
+
+    type Comment{
+      id: ID!
+      text: String!
+      author: User!
+  }
 `;
 
 // resolvers
@@ -66,9 +105,7 @@ const resolvers = {
           post.title
             .toLocaleLowerCase()
             .includes(args.query.toLocaleLowerCase()) ||
-          post.body
-            .toLocaleLowerCase()
-            .includes(args.query.toLocaleLowerCase())
+          post.body.toLocaleLowerCase().includes(args.query.toLocaleLowerCase())
         );
       });
     },
@@ -79,6 +116,35 @@ const resolvers = {
         body: "body is here",
         published: false,
       };
+    },
+    comments(parent, args, ctx, info) {
+      return comments;
+    },
+  },
+  Post: {
+    author(parent, args, ctx, info) {
+      return users.find((user) => {
+        return parent.author === user.id;
+      });
+    },
+  },
+  User: {
+    posts(parent, args, ctx, info) {
+      return posts.filter((post) => {
+        return parent.id === post.author;
+      });
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => {
+        return comment.author === parent.id;
+      });
+    },
+  },
+  Comment: {
+    author(parent, args, ctx, info) {
+      return users.find((user) => {
+        return user.id === parent.author;
+      });
     },
   },
 };
