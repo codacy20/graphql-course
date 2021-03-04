@@ -11,4 +11,4 @@ const Comment = {
   },
 };
 
-export { Comment as defualt };
+export { Comment as default };
