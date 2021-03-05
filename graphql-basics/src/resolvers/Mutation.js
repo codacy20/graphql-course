@@ -46,6 +46,7 @@ const Mutation = {
     if (typeof data.email === "string") {
       const emailTaken = db.users.some((user) => user.email === data.email);
       if (emailTaken) throw new Error("Email taken");
+      user.email = data.email;
     }
     if (typeof data.name === "string") {
       user.name = data.name;
@@ -85,6 +86,22 @@ const Mutation = {
 
     return newPost;
   },
+  updatePost(parent, { id, data: { title, body, published } }, { db }, info) {
+    const post = db.posts.find((post) => post.id === id);
+    if (!post) throw new Error("Post not found");
+
+    if (typeof title === "string") {
+      post.title = title;
+    }
+    if (typeof body === "string") {
+      post.body = body;
+    }
+
+    if (typeof published === "boolean") {
+      post.published = published;
+    }
+    return post;
+  },
   deleteComment(parent, args, { db }, info) {
     const commentIndex = db.comments.findIndex(
       (comment) => comment.id === args.id
@@ -117,6 +134,22 @@ const Mutation = {
 
     db.comments.push(newComment);
     return newComment;
+  },
+  updateComment(parent, { id, data: { text, author, post } }, { db }, info) {
+    const comment = db.comments.find((comment) => comment.id === id);
+    if (!comment) throw new Error("Comment not found");
+
+    if (typeof text === "string") {
+      comment.text = text;
+    }
+    if (typeof author === "string") {
+      comment.author = author;
+    }
+
+    if (typeof post === "string") {
+      comment.post = post;
+    }
+    return comment;
   },
 };
 
