@@ -113,7 +113,7 @@ const Mutation = {
 
     return deletedComment[0];
   },
-  createComment(parent, args, { db }, info) {
+  createComment(parent, args, { db, pubSub }, info) {
     const userExists = db.users.some((user) => user.id === args.data.author);
     const publishedPostExists = db.posts.some(
       (post) => post.id === args.data.post && post.published
@@ -131,8 +131,8 @@ const Mutation = {
       id: uuidv4(),
       ...args.data,
     };
-
     db.comments.push(newComment);
+    pubSub.publish(`comment ${args.data.post}`, { comment: newComment });
     return newComment;
   },
   updateComment(parent, { id, data: { text, author, post } }, { db }, info) {
