@@ -7,7 +7,7 @@ const Subscription = {
 
       if (!post) throw new Error("no post found");
 
-      return pubSub.asyncIterator("comment " + postId);
+      return pubSub.asyncIterator("comment");
     },
   },
   post: {
